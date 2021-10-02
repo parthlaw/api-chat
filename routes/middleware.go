@@ -19,7 +19,7 @@ type Response struct {
 	Error bool `json:"error"`
 	Data utils.User `json:"data"`
 }
-const baseUrl= "http://localhost:8000"
+const baseUrl= "https://staging.l-earnapp.com"
 func Middleware(next http.Handler) http.Handler{
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token:=r.Header.Get("Authorization")
