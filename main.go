@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 	"github.com/streadway/amqp"
 )
 func helloHandler(name string) http.Handler {
@@ -50,9 +51,10 @@ func main() {
 	mux:=http.NewServeMux()
 	mux.Handle("/",routes.Middleware(helloHandler("World")))
     mux.Handle("/ws",routes.Middleware(websocketServer(wsServer)))
+    handler:=cors.Default().Handler(mux)
     port:=os.Getenv("PORT")
     if port=="" {
         port="8080"
     }
-	http.ListenAndServe(":"+port,mux)
+	http.ListenAndServe(":"+port,handler)
 }

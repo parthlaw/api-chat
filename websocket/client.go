@@ -119,11 +119,8 @@ func (client *Client) disconnect() {
 	client.conn.Close()
 }
 func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
-	name, ok := r.URL.Query()["name"]
-	if !ok || len(name[0]) < 1 {
-		log.Println("Url params missing")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(utils.Response{Error: true,Message: "Query string 'name' not provided"})
+	user:=r.Context().Value("user").(utils.User)
+	if user.Name==""{
 		return
 	}
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -132,7 +129,7 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := newClient(conn, name[0], wsServer)
+	client := newClient(conn, user.Name, wsServer)
 	fmt.Println("New Client Joined")
 	fmt.Println(client)
 	go client.writePump()
